@@ -6,12 +6,19 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".CriaTarefasFragment">
 
-    <EditText
-        android:id="@+id/editTextTarefa"
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputLayoutTarefa"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
-        app:layout_constraintTop_toTopOf="parent"
-        android:hint="Digite aqui a sua tarefa"/>
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:id="@+id/editTextTarefa"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            app:layout_constraintTop_toTopOf="parent"
+            android:hint="Digite aqui a sua tarefa"/>
+    </com.google.android.material.textfield.TextInputLayout>
 
     <Button
         android:id="@+id/botaoCriaTarefa"

@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.fragment.findNavController
 import com.example.minhastarefas.databinding.FragmentListaTarefasBinding
 
 class ListaTarefasFragment : Fragment() {
@@ -23,23 +24,24 @@ class ListaTarefasFragment : Fragment() {
         binding = FragmentListaTarefasBinding.inflate(inflater)
 
         binding.botaoCriaTarefa.setOnClickListener {
-            criarNovaTarefa.invoke()
+            findNavController().navigate(R.id.action_fragmentListaTarefas_to_fragmentCriarTarefas)
+//            criarNovaTarefa.invoke()
         }
 
         return binding.root
     }
 
-    companion object {
-        private var criarNovaTarefa: () -> Unit = {}
-
-        @JvmStatic
-        fun newInstance(criaTarefa: () -> Unit = {}, param2: String): ListaTarefasFragment {
-            criarNovaTarefa = criaTarefa
-            return ListaTarefasFragment().apply {
-                arguments = Bundle().apply {
-
-                }
-            }
-        }
-    }
+//    companion object {
+//        private var criarNovaTarefa: () -> Unit = {}
+//
+//        @JvmStatic
+//        fun newInstance(criaTarefa: () -> Unit = {}, param2: String): ListaTarefasFragment {
+//            criarNovaTarefa = criaTarefa
+//            return ListaTarefasFragment().apply {
+//                arguments = Bundle().apply {
+//
+//                }
+//            }
+//        }
+//    }
 }

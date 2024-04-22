@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/fragmentListaTarefas">
+
+    <fragment
+        android:id="@+id/fragmentCriarTarefas"
+        android:name="com.example.minhastarefas.CriaTarefasFragment"
+        android:label="Criar Nova Tarefa"
+        tools:layout="@layout/fragment_cria_tarefas" />
+
+    <fragment
+        android:id="@+id/fragmentListaTarefas"
+        android:name="com.example.minhastarefas.ListaTarefasFragment"
+        android:label="Minhas tarefas atuais"
+        tools:layout="@layout/fragment_lista_tarefas" >
+        <action
+            android:id="@+id/action_fragmentListaTarefas_to_fragmentCriarTarefas"
+            app:destination="@id/fragmentCriarTarefas" />
+    </fragment>
+
+</navigation>

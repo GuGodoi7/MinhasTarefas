@@ -21,6 +21,7 @@ class MainActivity : AppCompatActivity() {
     private val listaTarefas = arrayListOf<Tarefa>()
     private val categorias = arrayListOf<String>()
     private val gson = GsonBuilder().create()
+    val adapter = TarefasAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,7 +47,12 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         })
-        recuperaDados("TAREFA")
+        recuperaDados("TAREFAS")
+        adapter.onClick = {
+            val index = listaTarefas.indexOf(it)
+            listaTarefas[index].completa = !listaTarefas[index].completa
+            salvarDados(listaTarefas)
+        }
 //        abrirTelaListaTarefas()
     }
 
@@ -77,20 +83,22 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-        println(categorias)
     }
 
     private fun salvarDados(tarefas: List<Tarefa>) {
         val tarefasJson = gson.toJson(tarefas)
-        sharedPrefs.edit().putString("TAREFA", tarefasJson).apply()
+        sharedPrefs.edit().putString("TAREFAS", tarefasJson).apply()
+        adapter.submitList(tarefas)
     }
 
     private fun recuperaDados(key: String) {
-        val tarefasJson = sharedPrefs.getString(key, "").orEmpty()
+        val tarefasJson = sharedPrefs.getString(key, "[]").orEmpty()
         listaTarefas.addAll(gson.fromJson<Array<Tarefa>>(
             tarefasJson,
             Array<Tarefa>::class.java
         ))
+
+        adapter.submitList(listaTarefas)
     }
 
 //    override fun onBackPressed() {

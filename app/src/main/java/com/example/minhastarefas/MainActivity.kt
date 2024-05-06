@@ -1,11 +1,13 @@
 package com.example.minhastarefas
 
 import android.content.Context
+import android.content.DialogInterface
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.appcompat.app.AlertDialog
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupActionBarWithNavController
@@ -22,6 +24,7 @@ class MainActivity : AppCompatActivity() {
     private val categorias = arrayListOf<String>()
     private val gson = GsonBuilder().create()
     val adapter = TarefasAdapter()
+    val categoriasAdapter = CategoriasAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,13 +50,41 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         })
-        recuperaDados("TAREFAS")
+        recuperaDados()
         adapter.onClick = {
             val index = listaTarefas.indexOf(it)
             listaTarefas[index].completa = !listaTarefas[index].completa
             salvarDados(listaTarefas)
         }
-//        abrirTelaListaTarefas()
+        adapter.onLongClick = {
+            val dialog = AlertDialog.Builder(this)
+                .setTitle(getString(R.string.excluir_tarefa))
+                .setMessage(getString(R.string.tem_certeza))
+                .setPositiveButton(
+                    getString(R.string.sim),
+                    object : DialogInterface.OnClickListener {
+                        override fun onClick(p0: DialogInterface?, p1: Int) {
+                            val index = listaTarefas.indexOf(it)
+                            listaTarefas.removeAt(index)
+                            salvarDados(listaTarefas)
+                            adapter.notifyDataSetChanged()
+                        }
+                    })
+                .setNegativeButton(
+                    getString(R.string.nao),
+                    object : DialogInterface.OnClickListener {
+                        override fun onClick(p0: DialogInterface?, p1: Int) {
+                            // Não faz nada
+                        }
+                    })
+
+            dialog.show()
+        }
+        categoriasAdapter.onClick = { categoria ->
+            adapter.submitList(listaTarefas.filter { tarefa ->
+                tarefa.descricao.contains(categoria)
+            })
+        }
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -83,52 +114,36 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+
+        categoriasAdapter.submitList(categorias)
+        val categoriasJson = gson.toJson(categorias)
+        sharedPrefs.edit().putString(Constants.CATEGORIAS, categoriasJson).apply()
     }
 
     private fun salvarDados(tarefas: List<Tarefa>) {
         val tarefasJson = gson.toJson(tarefas)
-        sharedPrefs.edit().putString("TAREFAS", tarefasJson).apply()
+        sharedPrefs.edit().putString(Constants.TAREFAS, tarefasJson).apply()
         adapter.submitList(tarefas)
     }
 
-    private fun recuperaDados(key: String) {
-        val tarefasJson = sharedPrefs.getString(key, "[]").orEmpty()
-        listaTarefas.addAll(gson.fromJson<Array<Tarefa>>(
-            tarefasJson,
-            Array<Tarefa>::class.java
-        ))
+    private fun recuperaDados() {
+        val tarefasJson = sharedPrefs.getString(Constants.TAREFAS, "[]").orEmpty()
+        val categoriasJson = sharedPrefs.getString(Constants.CATEGORIAS, "[]").orEmpty()
+        listaTarefas.addAll(
+            gson.fromJson<Array<Tarefa>>(
+                tarefasJson,
+                Array<Tarefa>::class.java
+            )
+        )
+
+        categorias.addAll(
+            gson.fromJson(
+                categoriasJson,
+                Array<String>::class.java
+            )
+        )
 
         adapter.submitList(listaTarefas)
+        categoriasAdapter.submitList(categorias)
     }
-
-//    override fun onBackPressed() {
-//        navController.navigateUp()
-//    }
-
-//    private fun abrirTelaListaTarefas() {
-//        val listaTarefasFragment = ListaTarefasFragment.newInstance({
-//            abrirTelaCriarTarefas()
-//        }, "")
-//
-//        supportFragmentManager.beginTransaction().replace(
-//            binding.frameLayout.id,
-//            listaTarefasFragment
-//        ).commit()
-//    }
-//
-//    private fun abrirTelaCriarTarefas() {
-//        val listaTarefas = arrayListOf<Tarefa>()
-//        val criaTarefasFragment = CriaTarefasFragment.newInstance({
-//            val tarefa = Tarefa(
-//                descricao = it,
-//                completa = false
-//            )
-//            listaTarefas.add(tarefa)
-//        }, "")
-//
-//        supportFragmentManager.beginTransaction().replace(
-//            binding.frameLayout.id,
-//            criaTarefasFragment
-//        ).commit()
-//    }
 }

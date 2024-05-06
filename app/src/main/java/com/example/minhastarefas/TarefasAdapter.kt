@@ -11,14 +11,21 @@ import com.example.minhastarefas.databinding.ItemTarefaCompletaBinding
 class TarefasAdapter : ListAdapter<Tarefa, RecyclerView.ViewHolder>(DiffCallback()) {
 
     var onClick: (Tarefa) -> Unit = {}
+    var onLongClick: (Tarefa) -> Unit = {}
 
     inner class TarefasViewHolder(val binding: ItemTarefaBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(tarefa: Tarefa) {
             binding.textViewTarefa.text = tarefa.descricao
-            binding.root.setOnClickListener {
+            binding.radioButtonCompletarTarefa.isChecked = tarefa.completa
+            binding.radioButtonCompletarTarefa.setOnClickListener {
                 onClick(tarefa)
                 notifyDataSetChanged()
+            }
+            binding.textViewTarefa.setOnLongClickListener {
+                onLongClick(tarefa)
+
+                return@setOnLongClickListener true
             }
         }
     }
@@ -27,9 +34,15 @@ class TarefasAdapter : ListAdapter<Tarefa, RecyclerView.ViewHolder>(DiffCallback
         RecyclerView.ViewHolder(binding.root) {
         fun bind(tarefa: Tarefa) {
             binding.textViewTarefa.text = tarefa.descricao
-            binding.root.setOnClickListener {
+            binding.radioButtonCompletarTarefa.isChecked = tarefa.completa
+            binding.radioButtonCompletarTarefa.setOnClickListener {
                 onClick(tarefa)
                 notifyDataSetChanged()
+            }
+            binding.textViewTarefa.setOnLongClickListener {
+                onLongClick(tarefa)
+
+                return@setOnLongClickListener true
             }
         }
     }

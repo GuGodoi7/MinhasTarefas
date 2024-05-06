@@ -13,6 +13,7 @@ class ListaTarefasFragment : Fragment() {
 
     private lateinit var binding: FragmentListaTarefasBinding
     private lateinit var adapter: TarefasAdapter
+    private lateinit var categoriasAdapter: CategoriasAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,6 +26,7 @@ class ListaTarefasFragment : Fragment() {
     ): View? {
         binding = FragmentListaTarefasBinding.inflate(inflater)
         adapter = (activity as MainActivity).adapter
+        categoriasAdapter = (activity as MainActivity).categoriasAdapter
 
         binding.botaoCriaTarefa.setOnClickListener {
             findNavController().navigate(R.id.action_fragmentListaTarefas_to_fragmentCriarTarefas)
@@ -37,6 +39,10 @@ class ListaTarefasFragment : Fragment() {
     private fun configurarRecyclewView() {
         binding.recyclerViewTarefas.adapter = adapter
         binding.recyclerViewTarefas.layoutManager = LinearLayoutManager(context)
+
+        binding.recyclewViewCategorias.adapter = categoriasAdapter
+        binding.recyclewViewCategorias.layoutManager =
+            LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
     }
 
 //    companion object {
